@@ -1,45 +1,56 @@
 #!/usr/bin/python3
 
-def afficher_plateau(plateau):
-    for ligne in plateau:
-        print(" | ".join(ligne))
+def print_board(board):
+    for row in board:
+        print(" | ".join(row))
         print("-" * 5)
 
-def verifier_gagnant(plateau):
-    for ligne in plateau:
-        if ligne.count(ligne[0]) == len(ligne) and ligne[0] != " ":
+def check_winner(board):
+    for row in board:
+        if row.count(row[0]) == len(row) and row[0] != " ":
             return True
-
-    for col in range(len(plateau[0])):
-        if plateau[0][col] == plateau[1][col] == plateau[2][col] and plateau[0][col] != " ":
+    for col in range(len(board[0])):
+        if board[0][col] == board[1][col] == board[2][col] and board[0][col] != " ":
             return True
-
-    if plateau[0][0] == plateau[1][1] == plateau[2][2] and plateau[0][0] != " ":
+    if board[0][0] == board[1][1] == board[2][2] and board[0][0] != " ":
         return True
-
-    if plateau[0][2] == plateau[1][1] == plateau[2][0] and plateau[0][2] != " ":
+    if board[0][2] == board[1][1] == board[2][0] and board[0][2] != " ":
         return True
-
     return False
 
-def morpion():
-    plateau = [[" "]*3 for _ in range(3)]
-    joueur = "X"
-    while not verifier_gagnant(plateau):
-        afficher_plateau(plateau)
-        ligne = int(input("Choisis la ligne (0, 1 ou 2) pour le joueur " + joueur + " : "))
-        colonne = int(input("Choisis la colonne (0, 1 ou 2) pour le joueur " + joueur + " : "))
-        if plateau[ligne][colonne] == " ":
-            plateau[ligne][colonne] = joueur
-            if joueur == "X":
-                joueur = "O"
-            else:
-                joueur = "X"
+def get_position(player):
+    while True:
+        try:
+            row = int(input(f"Enter row (0, 1, or 2) for player {player}: "))
+            col = int(input(f"Enter column (0, 1, or 2) for player {player}: "))
+            if row not in [0, 1, 2] or col not in [0, 1, 2]:
+                print("Invalid position. Please choose between 0 and 2.")
+                continue
+            return row, col
+        except ValueError:
+            print("Invalid input. Please enter numbers only.")
+
+def tic_tac_toe():
+    board = [[" "]*3 for _ in range(3)]
+    player = "X"
+    moves = 0
+    while True:
+        print_board(board)
+        row, col = get_position(player)
+        if board[row][col] == " ":
+            board[row][col] = player
+            moves += 1
+            if check_winner(board):
+                print_board(board)
+                print(f"Player {player} wins!")
+                break
+            elif moves == 9:
+                print_board(board)
+                print("It's a draw!")
+                break
+            player = "O" if player == "X" else "X"
         else:
-            print("Cette case est déjà prise ! Réessaie.")
+            print("That spot is already taken. Try again.")
 
-    afficher_plateau(plateau)
-    print("Le joueur " + joueur + " a gagné !")
-
-morpion()
+tic_tac_toe()
 
